@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MetricCard } from '@/components/MetricCard';
 import { ProgressChart } from '@/components/ProgressChart';
 import { StateTable } from '@/components/StateTable';
+import { UnitSelector } from '@/components/UnitSelector';
 import { processExcelData, calculateMetrics } from '@/utils/dataProcessor';
+import { convertStateData, convertValue, UnitType, getUnitLabel } from '@/utils/unitConverter';
 import { StateData, DashboardMetrics } from '@/types/dashboard';
 import { 
   Building2, 
@@ -20,8 +22,10 @@ import {
 } from 'lucide-react';
 
 const Index = () => {
+  const [originalData, setOriginalData] = useState<StateData[]>([]);
   const [data, setData] = useState<StateData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<UnitType>('GPs');
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,10 +37,8 @@ const Index = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const processedData = processExcelData();
-      const calculatedMetrics = calculateMetrics(processedData);
       
-      setData(processedData);
-      setMetrics(calculatedMetrics);
+      setOriginalData(processedData);
       setLastUpdated(new Date());
       setIsLoading(false);
     };
@@ -44,13 +46,25 @@ const Index = () => {
     loadData();
   }, []);
 
+  // Update data and metrics when unit changes
+  useEffect(() => {
+    if (originalData.length > 0) {
+      const convertedData = convertStateData(originalData, selectedUnit);
+      const calculatedMetrics = calculateMetrics(convertedData);
+      
+      setData(convertedData);
+      setMetrics(calculatedMetrics);
+    }
+  }, [originalData, selectedUnit]);
+
   const refreshData = () => {
     const processedData = processExcelData();
-    const calculatedMetrics = calculateMetrics(processedData);
-    
-    setData(processedData);
-    setMetrics(calculatedMetrics);
+    setOriginalData(processedData);
     setLastUpdated(new Date());
+  };
+
+  const handleUnitChange = (unit: UnitType) => {
+    setSelectedUnit(unit);
   };
 
   if (isLoading) {
@@ -90,6 +104,12 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Unit Selector */}
+        <UnitSelector 
+          selectedUnit={selectedUnit} 
+          onUnitChange={handleUnitChange}
+        />
+
         {/* Key Metrics */}
         {metrics && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -101,7 +121,7 @@ const Index = () => {
               change={5}
             />
             <MetricCard
-              title="Total GPs"
+              title={`Total ${selectedUnit}`}
               value={metrics.totalGPs}
               icon={Network}
               color="green"
@@ -128,7 +148,7 @@ const Index = () => {
         {metrics && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard
-              title="Avg Uptime GPs"
+              title={`Avg Uptime ${selectedUnit}`}
               value={metrics.avgUptime}
               icon={Wifi}
               color="green"
@@ -164,7 +184,7 @@ const Index = () => {
         <ProgressChart data={data} />
 
         {/* State Table */}
-        <StateTable data={data} />
+        <StateTable data={data} unit={selectedUnit} />
 
         {/* Footer */}
         <Card className="animate-fade-in">
@@ -175,7 +195,7 @@ const Index = () => {
               </p>
               <p>
                 Data is updated weekly and reflects the latest progress in HOTO completion, surveys, 
-                FTTH connections, and financial milestones.
+                FTTH connections, and financial milestones. Currently displaying data in <strong>{getUnitLabel(selectedUnit)}</strong>.
               </p>
             </div>
           </CardContent>

@@ -6,9 +6,10 @@ import { StateData } from '@/types/dashboard';
 
 interface StateTableProps {
   data: StateData[];
+  unit?: string;
 }
 
-export const StateTable = ({ data }: StateTableProps) => {
+export const StateTable = ({ data, unit = 'GPs' }: StateTableProps) => {
   const getStatusColor = (percentage: number) => {
     if (percentage >= 100) return 'bg-green-500';
     if (percentage >= 80) return 'bg-yellow-500';
@@ -18,7 +19,7 @@ export const StateTable = ({ data }: StateTableProps) => {
   return (
     <Card className="animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">State-wise Progress Details</CardTitle>
+        <CardTitle className="text-lg font-semibold">State-wise Progress Details ({unit})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -27,7 +28,7 @@ export const StateTable = ({ data }: StateTableProps) => {
               <TableRow>
                 <TableHead>State</TableHead>
                 <TableHead>PIA</TableHead>
-                <TableHead>Total GPs</TableHead>
+                <TableHead>Total {unit}</TableHead>
                 <TableHead>HOTO %</TableHead>
                 <TableHead>Survey %</TableHead>
                 <TableHead>FTTH Connections</TableHead>
