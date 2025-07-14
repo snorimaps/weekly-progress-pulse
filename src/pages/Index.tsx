@@ -82,7 +82,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="text-center mb-8 animate-fade-in">
+        <div className="relative text-center mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             BharatNet Program Dashboard
           </h1>
@@ -102,13 +102,15 @@ const Index = () => {
               Refresh
             </button>
           </div>
+          
+          {/* Unit Selector - positioned in top right */}
+          <div className="absolute top-0 right-0">
+            <UnitSelector 
+              selectedUnit={selectedUnit} 
+              onUnitChange={handleUnitChange}
+            />
+          </div>
         </div>
-
-        {/* Unit Selector */}
-        <UnitSelector 
-          selectedUnit={selectedUnit} 
-          onUnitChange={handleUnitChange}
-        />
 
         {/* Key Metrics */}
         {metrics && (
