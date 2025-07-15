@@ -82,19 +82,29 @@ export const processExcelData = (): StateData[] => {
   ];
 };
 
+export const filterDataByState = (data: StateData[], selectedState: string): StateData[] => {
+  if (selectedState === 'India') {
+    return data; // Return all data for cumulative view
+  }
+  
+  // Filter by state number (sNo)
+  const stateNumber = parseInt(selectedState);
+  return data.filter(state => state.sNo === stateNumber);
+};
+
 export const calculateMetrics = (data: StateData[]): DashboardMetrics => {
   const totalGPs = data.reduce((sum, state) => sum + state.gpsInScope.total, 0);
   const totalHOTO = data.reduce((sum, state) => sum + state.hoto.current, 0);
   const totalSurvey = data.reduce((sum, state) => sum + state.survey.current, 0);
   const totalFTTH = data.reduce((sum, state) => sum + state.ftthConnections.current, 0);
-  const avgUptime = data.reduce((sum, state) => sum + state.uptime.current, 0) / data.length;
+  const avgUptime = data.length > 0 ? data.reduce((sum, state) => sum + state.uptime.current, 0) / data.length : 0;
   
   const totalFinancialValue = data.reduce((sum, state) => {
     const amount = parseFloat(state.financial.amount.replace(/[^\d.]/g, ''));
     return sum + (isNaN(amount) ? 0 : amount);
   }, 0);
 
-  const completionRate = data.reduce((sum, state) => sum + state.hoto.percentage, 0) / data.length;
+  const completionRate = data.length > 0 ? data.reduce((sum, state) => sum + state.hoto.percentage, 0) / data.length : 0;
 
   return {
     totalStates: data.length,

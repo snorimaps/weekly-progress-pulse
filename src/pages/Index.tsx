@@ -1,10 +1,12 @@
+
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MetricCard } from '@/components/MetricCard';
 import { ProgressChart } from '@/components/ProgressChart';
 import { StateTable } from '@/components/StateTable';
 import { UnitSelector } from '@/components/UnitSelector';
-import { processExcelData, calculateMetrics } from '@/utils/dataProcessor';
+import { StateSelector } from '@/components/StateSelector';
+import { processExcelData, calculateMetrics, filterDataByState } from '@/utils/dataProcessor';
 import { convertStateData, convertValue, UnitType, getUnitLabel } from '@/utils/unitConverter';
 import { StateData, DashboardMetrics } from '@/types/dashboard';
 import { 
@@ -27,6 +29,7 @@ const Index = () => {
   const [data, setData] = useState<StateData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<UnitType>('GPs');
+  const [selectedState, setSelectedState] = useState<string>('India');
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
@@ -47,16 +50,17 @@ const Index = () => {
     loadData();
   }, []);
 
-  // Update data and metrics when unit changes
+  // Update data and metrics when unit or state changes
   useEffect(() => {
     if (originalData.length > 0) {
-      const convertedData = convertStateData(originalData, selectedUnit);
+      const filteredData = filterDataByState(originalData, selectedState);
+      const convertedData = convertStateData(filteredData, selectedUnit);
       const calculatedMetrics = calculateMetrics(convertedData);
       
       setData(convertedData);
       setMetrics(calculatedMetrics);
     }
-  }, [originalData, selectedUnit]);
+  }, [originalData, selectedUnit, selectedState]);
 
   const refreshData = () => {
     const processedData = processExcelData();
@@ -66,6 +70,10 @@ const Index = () => {
 
   const handleUnitChange = (unit: UnitType) => {
     setSelectedUnit(unit);
+  };
+
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
   };
 
   if (isLoading) {
@@ -112,6 +120,12 @@ const Index = () => {
             />
           </div>
         </div>
+
+        {/* State Selector */}
+        <StateSelector 
+          selectedState={selectedState} 
+          onStateChange={handleStateChange}
+        />
 
         {/* Key Metrics with India Map */}
         {metrics && (
@@ -189,13 +203,6 @@ const Index = () => {
           </div>
         )}
 
-        {/* Secondary Metrics */}
-        {metrics && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            
-          </div>
-        )}
-
         {/* Charts */}
         <ProgressChart data={data} />
 
@@ -211,7 +218,8 @@ const Index = () => {
               </p>
               <p>
                 Data is updated weekly and reflects the latest progress in HOTO completion, surveys, 
-                FTTH connections, and financial milestones. Currently displaying data in <strong>{getUnitLabel(selectedUnit)}</strong>.
+                FTTH connections, and financial milestones. Currently displaying data in <strong>{getUnitLabel(selectedUnit)}</strong>
+                {selectedState !== 'India' && <span> for <strong>Package {selectedState}</strong></span>}.
               </p>
             </div>
           </CardContent>
