@@ -1,25 +1,139 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BharatNet Program Dashboard</title>
-    <meta name="description" content="Dynamic React Dashboard for BharatNet Program Weekly Progress Monitoring" />
-    <meta name="author" content="BharatNet Team" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div class="max-w-7xl mx-auto space-y-6">
+            <!-- Header -->
+            <div class="text-center mb-8 animate-fade-in">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">
+                    BharatNet Program Dashboard
+                </h1>
+                <p class="text-gray-600 mb-6">
+                    Real-time insights into India's digital infrastructure development
+                </p>
+                
+                <!-- Action Buttons -->
+                <div class="flex justify-center gap-4">
+                    <button id="exportBtn" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export Data
+                    </button>
+                    <button id="refreshBtn" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
 
-    <meta property="og:title" content="BharatNet Program Dashboard" />
-    <meta property="og:description" content="Dynamic React Dashboard for BharatNet Program Weekly Progress Monitoring" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+            <!-- Selectors Row -->
+            <div class="flex justify-between items-center mb-6">
+                <!-- State Selector -->
+                <div class="inline-flex rounded-lg bg-gray-200 p-1 flex-wrap gap-1" id="stateSelector">
+                    <!-- States will be populated by JavaScript -->
+                </div>
+                
+                <!-- Unit Selector -->
+                <div class="inline-flex rounded-lg bg-gray-200 p-1" id="unitSelector">
+                    <!-- Units will be populated by JavaScript -->
+                </div>
+            </div>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@bharatnet" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+            <!-- Loading State -->
+            <div id="loadingState" class="flex items-center justify-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <span class="ml-3 text-gray-600">Loading dashboard data...</span>
+            </div>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+            <!-- Main Content -->
+            <div id="mainContent" class="hidden">
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                    <div id="metricCards" class="contents">
+                        <!-- Metric cards will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- India Map -->
+                    <div class="bg-white rounded-lg shadow-sm border p-4 h-full flex items-center justify-center">
+                        <div class="w-full h-full max-w-48 max-h-72">
+                            <svg viewBox="0 0 300 400" class="w-full h-full text-blue-600" fill="currentColor">
+                                <path d="M150 50 C160 45, 170 50, 175 60 L180 70 C185 75, 190 80, 195 90 L200 100 C205 110, 210 120, 215 130 L220 150 C225 160, 230 170, 235 180 L240 200 C245 220, 250 240, 245 260 L240 280 C235 300, 230 320, 220 340 L210 360 C200 370, 190 375, 180 370 L170 365 C160 360, 150 355, 140 350 L130 345 C120 340, 110 335, 100 330 L90 320 C80 310, 70 300, 65 285 L60 270 C55 250, 50 230, 55 210 L60 190 C65 180, 70 170, 75 160 L80 140 C85 130, 90 120, 95 110 L100 90 C105 80, 110 70, 115 60 L120 55 C130 50, 140 48, 150 50 Z" class="fill-blue-100 stroke-blue-400 stroke-2"/>
+                                <text x="150" y="30" text-anchor="middle" class="text-xs font-semibold fill-gray-700">India</text>
+                                <circle cx="120" cy="120" r="3" class="fill-blue-500"/>
+                                <circle cx="160" cy="140" r="3" class="fill-blue-500"/>
+                                <circle cx="180" cy="180" r="3" class="fill-blue-500"/>
+                                <circle cx="140" cy="200" r="3" class="fill-blue-500"/>
+                                <circle cx="120" cy="240" r="3" class="fill-blue-500"/>
+                                <circle cx="180" cy="260" r="3" class="fill-blue-500"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow-sm border animate-fade-in">
+                        <div class="p-6 pb-4">
+                            <h3 class="text-lg font-semibold">HOTO vs Survey Progress</h3>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <canvas id="barChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm border animate-fade-in">
+                        <div class="p-6 pb-4">
+                            <h3 class="text-lg font-semibold">GP Distribution by State</h3>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <canvas id="pieChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- State Table -->
+                <div class="bg-white rounded-lg shadow-sm border animate-fade-in">
+                    <div class="p-6 pb-4">
+                        <h3 class="text-lg font-semibold">State-wise Progress Details (<span id="tableUnit">GPs</span>)</h3>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="border-b">
+                                    <tr>
+                                        <th class="text-left p-4 font-medium text-gray-500">State</th>
+                                        <th class="text-left p-4 font-medium text-gray-500">PIA</th>
+                                        <th class="text-left p-4 font-medium text-gray-500">Total <span id="tableHeaderUnit">GPs</span></th>
+                                        <th class="text-left p-4 font-medium text-gray-500">HOTO %</th>
+                                        <th class="text-left p-4 font-medium text-gray-500">Survey %</th>
+                                        <th class="text-left p-4 font-medium text-gray-500">FTTH Connections</th>
+                                        <th class="text-left p-4 font-medium text-gray-500">Financial</th>
+                                        <th class="text-left p-4 font-medium text-gray-500">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
