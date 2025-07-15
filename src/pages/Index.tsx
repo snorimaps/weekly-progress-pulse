@@ -85,13 +85,13 @@ const Index = () => {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="relative text-center mb-8 animate-fade-in">
+        <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             BharatNet Program Dashboard
           </h1>
@@ -111,21 +111,19 @@ const Index = () => {
               Refresh
             </button>
           </div>
-          
-          {/* Unit Selector - positioned in top right */}
-          <div className="absolute top-0 right-0">
-            <UnitSelector 
-              selectedUnit={selectedUnit} 
-              onUnitChange={handleUnitChange}
-            />
-          </div>
         </div>
 
-        {/* State Selector */}
-        <StateSelector 
-          selectedState={selectedState} 
-          onStateChange={handleStateChange}
-        />
+        {/* Selectors Row */}
+        <div className="flex justify-between items-center mb-6">
+          <StateSelector 
+            selectedState={selectedState} 
+            onStateChange={handleStateChange}
+          />
+          <UnitSelector 
+            selectedUnit={selectedUnit} 
+            onUnitChange={handleUnitChange}
+          />
+        </div>
 
         {/* Key Metrics with India Map */}
         {metrics && (
