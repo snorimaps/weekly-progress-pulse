@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MetricCard } from '@/components/MetricCard';
@@ -20,6 +19,8 @@ import {
   Calendar,
   RefreshCw
 } from 'lucide-react';
+
+import { IndiaMap } from '@/components/IndiaMap';
 
 const Index = () => {
   const [originalData, setOriginalData] = useState<StateData[]>([]);
@@ -112,73 +113,86 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Key Metrics */}
+        {/* Key Metrics with India Map */}
         {metrics && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <MetricCard
-              title="Total States"
-              value={metrics.totalStates}
-              icon={Building2}
-              color="blue"
-              change={5}
-            />
-            <MetricCard
-              title={`Total ${selectedUnit}`}
-              value={metrics.totalGPs}
-              icon={Network}
-              color="green"
-              change={12}
-            />
-            <MetricCard
-              title="HOTO Completed"
-              value={metrics.totalHOTO}
-              icon={CheckCircle}
-              color="orange"
-              change={8}
-            />
-            <MetricCard
-              title="Survey Completed"
-              value={metrics.totalSurvey}
-              icon={Search}
-              color="purple"
-              change={15}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+            {/* First row of metrics */}
+            <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                title="Total States"
+                value={metrics.totalStates}
+                icon={Building2}
+                color="blue"
+                change={5}
+              />
+              <MetricCard
+                title={`Total ${selectedUnit}`}
+                value={metrics.totalGPs}
+                icon={Network}
+                color="green"
+                change={12}
+              />
+              <MetricCard
+                title="HOTO Completed"
+                value={metrics.totalHOTO}
+                icon={CheckCircle}
+                color="orange"
+                change={8}
+              />
+              <MetricCard
+                title="Survey Completed"
+                value={metrics.totalSurvey}
+                icon={Search}
+                color="purple"
+                change={15}
+              />
+            </div>
+            
+            {/* India Map */}
+            <div className="lg:col-span-1 lg:row-span-2">
+              <IndiaMap />
+            </div>
+            
+            {/* Second row of metrics */}
+            <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                title={`Avg Uptime ${selectedUnit}`}
+                value={metrics.avgUptime}
+                icon={Wifi}
+                color="green"
+                change={-2}
+              />
+              <MetricCard
+                title="FTTH Connections"
+                value={metrics.totalFTTH}
+                icon={Users}
+                color="blue"
+                change={18}
+              />
+              <MetricCard
+                title="Financial Progress"
+                value={metrics.totalFinancial}
+                icon={DollarSign}
+                color="green"
+                suffix=" Cr"
+                change={25}
+              />
+              <MetricCard
+                title="Completion Rate"
+                value={metrics.completionRate}
+                icon={TrendingUp}
+                color="purple"
+                suffix="%"
+                change={7}
+              />
+            </div>
           </div>
         )}
 
         {/* Secondary Metrics */}
         {metrics && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <MetricCard
-              title={`Avg Uptime ${selectedUnit}`}
-              value={metrics.avgUptime}
-              icon={Wifi}
-              color="green"
-              change={-2}
-            />
-            <MetricCard
-              title="FTTH Connections"
-              value={metrics.totalFTTH}
-              icon={Users}
-              color="blue"
-              change={18}
-            />
-            <MetricCard
-              title="Financial Progress"
-              value={metrics.totalFinancial}
-              icon={DollarSign}
-              color="green"
-              suffix=" Cr"
-              change={25}
-            />
-            <MetricCard
-              title="Completion Rate"
-              value={metrics.completionRate}
-              icon={TrendingUp}
-              color="purple"
-              suffix="%"
-              change={7}
-            />
+            
           </div>
         )}
 
